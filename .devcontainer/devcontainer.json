@@ -11,7 +11,8 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"ms-playwright.playwright"
+				"ms-playwright.playwright",
+				"CucumberOpen.cucumber-official"
 			]
 		}
 	},
