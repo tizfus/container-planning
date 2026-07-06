@@ -19,10 +19,10 @@ jobs:
         npm ci
         npx playwright install --with-deps chromium
     - name: Run tests
-      run: npm --prefix ./tests/ run test:html-report
+      run: npm --prefix ./tests/ run test:test-report.html
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
         name: test-report
-        path: ./tests/cucumber-report.html
+        path: ./tests/test-report.html
         retention-days: 10
