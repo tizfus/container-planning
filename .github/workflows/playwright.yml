@@ -20,7 +20,7 @@ jobs:
         npx playwright install --with-deps
     - name: Run tests
       working-directory: ./tests
-      run: npm run test:html-report
+      run: npm --prefix ./tests/ run test:html-report
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
