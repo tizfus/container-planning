@@ -1,0 +1,29 @@
+name: Run tests
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+    - uses: actions/setup-node@v6
+      with:
+        node-version: 24.x
+    - name: Install dependencies
+      working-directory: ./tests
+      run: | 
+        npm ci
+        npx playwright install --with-deps
+    - name: Run tests
+      working-directory: ./tests
+      run: npm run test:html-report
+    - uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: test-report
+        path: ./tests/cucumber-report.html
+        retention-days: 10
