@@ -5,8 +5,9 @@
     "esModuleInterop": true,
     "strict": true,
     "rootDir": ".",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "types": ["node"]
   },
-  "include": ["./**/*.ts"],
+  "include": ["./**/*.ts", "*.ts"],
   "exclude": ["node_modules"]
 }

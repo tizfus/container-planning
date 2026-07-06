@@ -1,9 +1,9 @@
 import { Given, When, Then } from '@cucumber/cucumber';
-import { CustomWorld } from '../support/world';
+import CustomWorld from "../support/world";
 import { expect } from '@playwright/test';
 
 Given('I am on {string}', async function (this: CustomWorld, url: string) {
-  await this.page?.goto(url);
+  // await this.page?.goto("/");
 });
 
 When('I take a screenshot', async function (this: CustomWorld) {

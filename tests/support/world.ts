@@ -1,28 +1,24 @@
 import { World } from '@cucumber/cucumber';
-import { Browser, BrowserContext, Page } from '@playwright/test';
+import { Browser, BrowserContext, Page, chromium } from '@playwright/test';
 
-export interface CustomWorld extends World {
-  browser: Browser | null;
-  context: BrowserContext | null;
-  page: Page | null;
-}
+export default class CustomWorld extends World {
+  browser!: Browser;
+  context!: BrowserContext;
+  page!: Page;
 
-export default class CustomWorldImpl extends World implements CustomWorld {
-  browser: Browser | null = null;
-  context: BrowserContext | null = null;
-  page: Page | null = null;
-
-  async beforeWorld() {
-    // Setup code before each scenario
+  constructor(opts: any) {
+      super(opts);      
   }
 
-  async afterWorld() {
-    // Cleanup code after each scenario
-    if (this.context) {
-      await this.context.close();
-    }
-    if (this.browser) {
-      await this.browser.close();
-    }
+  async init() {
+    this.browser = await chromium.launch({ headless: true });
+    this.context = await this.browser.newContext();
+    this.page = await this.context.newPage();
+  }
+
+  async close() {
+    await this.page.close();
+    await this.context.close();
+    await this.browser.close();
   }
 }

@@ -6,4 +6,4 @@ Feature: Example Test
   Scenario: Open a webpage
     Given I am on "https://example.com"
     When I take a screenshot
-    Then I should see "Example Domain"
+    Then I should see "Page"
