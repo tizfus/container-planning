@@ -7,12 +7,12 @@ export default class CustomWorld extends World {
   page!: Page;
 
   constructor(opts: any) {
-      super(opts);      
+      super(opts);
   }
 
   async init() {
     this.browser = await chromium.launch({ headless: true });
-    this.context = await this.browser.newContext();
+    this.context = await this.browser.newContext({ recordVideo: { dir: 'report/videos/' } });
     this.page = await this.context.newPage();
   }
 

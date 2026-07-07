@@ -6,7 +6,7 @@
     "test": "cucumber-js",
     "test:watch": "cucumber-js --watch",
     "test:parallel": "cucumber-js --parallel 4",
-    "test:html-report": "cucumber-js --format html:test-report.html"
+    "test:html-report": "cucumber-js --format html:report/result.html"
   },
   "devDependencies": {
     "@cucumber/cucumber": "^13.0.0",
