@@ -1,0 +1,28 @@
+name: Run tests
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+    - uses: actions/setup-node@v6
+      with:
+        node-version: 24.x
+    - name: Install dependencies
+      working-directory: ./tests
+      run: | 
+        npm ci
+        npx playwright install --with-deps chromium
+    - name: Run tests
+      run: npm --prefix ./tests/ run test:html-report
+    - uses: actions/upload-artifact@v7
+      if: ${{ !cancelled() }}
+      with:
+        name: test-report
+        path: ./tests/report/
+        retention-days: 10
