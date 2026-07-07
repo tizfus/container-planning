@@ -7,23 +7,22 @@ Given('a product with length {string} width {string} height {string}', async fun
   length: string,
   width: string,
   height: string
-) {
-  await this.page!.goto('file:///workspaces/container-planning/src/index.html');
-  
-  // Fill in the dimension inputs in the first row
+) { 
   await this.page!.getByTestId('length').first().fill(length);
   await this.page!.getByTestId('width').first().fill(width);
   await this.page!.getByTestId('height').first().fill(height);
 });
 
 When('I check the volume', async function (this: CustomWorld) {
-  // The volume is calculated reactively on input, so we just wait a moment
-  await this.page!.waitForTimeout(100);
+  await this.page!.getByTestId('totalVolume').isVisible();
 });
 
 Then('the total volume should be {string}', async function (this: CustomWorld, expected: string) {
   const totalVolumeText = await this.page!.getByTestId('totalVolume').textContent();
-  const totalVolume = parseFloat(totalVolumeText || '0');
+
+  expect(totalVolumeText).not.toBeNull();
+
+  const totalVolume = parseFloat(totalVolumeText!);
   const expectedVolume = parseFloat(expected);
   
   expect(totalVolume).toBeCloseTo(expectedVolume, 5);
