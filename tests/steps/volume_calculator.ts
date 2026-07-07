@@ -27,3 +27,24 @@ Then('the total volume should be {string}', async function (this: CustomWorld, e
   
   expect(totalVolume).toBeCloseTo(expectedVolume, 5);
 });
+
+When('I check size inputs', async function (this: CustomWorld) {
+  await this.page!.getByTestId('length').isVisible();
+  await this.page!.getByTestId('width').isVisible();
+  await this.page!.getByTestId('height').isVisible();
+});
+
+Then('length should be {string}', async function (this: CustomWorld, expected: string) {
+  const value = await this.page!.getByTestId('length').inputValue();
+  expect(value).toBe(expected);
+});
+
+Then('width should be {string}', async function (this: CustomWorld, expected: string) {
+  const value = await this.page!.getByTestId('width').inputValue();
+  expect(value).toBe(expected);
+});
+
+Then('the height should be {string}', async function (this: CustomWorld, expected: string) {
+  const value = await this.page!.getByTestId('height').inputValue();
+  expect(value).toBe(expected);
+});
