@@ -29,22 +29,22 @@ Then('the total volume should be {string}', async function (this: CustomWorld, e
 });
 
 When('I check size inputs', async function (this: CustomWorld) {
-  await this.page!.getByTestId('length').isVisible();
-  await this.page!.getByTestId('width').isVisible();
-  await this.page!.getByTestId('height').isVisible();
+  await this.page!.getByTestId('length').first().isVisible();
+  await this.page!.getByTestId('width').first().isVisible();
+  await this.page!.getByTestId('height').first().isVisible();
 });
 
 Then('length should be {string}', async function (this: CustomWorld, expected: string) {
-  const value = await this.page!.getByTestId('length').inputValue();
+  const value = await this.page!.getByTestId('length').first().inputValue();
   expect(value).toBe(expected);
 });
 
 Then('width should be {string}', async function (this: CustomWorld, expected: string) {
-  const value = await this.page!.getByTestId('width').inputValue();
+  const value = await this.page!.getByTestId('width').first().inputValue();
   expect(value).toBe(expected);
 });
 
 Then('the height should be {string}', async function (this: CustomWorld, expected: string) {
-  const value = await this.page!.getByTestId('height').inputValue();
+  const value = await this.page!.getByTestId('height').first().inputValue();
   expect(value).toBe(expected);
 });
