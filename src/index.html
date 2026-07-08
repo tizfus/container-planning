@@ -91,6 +91,27 @@
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
         }
+
+        .products-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+            padding: 0 0.25rem;
+        }
+
+        .products-header span {
+            font-weight: 500;
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        .product-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+        }
     </style>
 </head>
 <body>
@@ -103,50 +124,75 @@
     </div>
 
     <div class="form-container">
-        <div class="form-group">
-            <label for="length">Length (cm)</label>
-            <input type="number" id="length" class="dimension-input" data-testid="length" step="1" min="0" placeholder="0" inputmode="numeric">
+        <div class="products-header">
+            <span>Length (cm)</span>
+            <span>Width (cm)</span>
+            <span>Height (cm)</span>
         </div>
-        <div class="form-group">
-            <label for="width">Width (cm)</label>
-            <input type="number" id="width" class="dimension-input" data-testid="width" step="1" min="0" placeholder="0" inputmode="numeric">
-        </div>
-        <div class="form-group">
-            <label for="height">Height (cm)</label>
-            <input type="number" id="height" class="dimension-input" data-testid="height" step="1" min="0" placeholder="0" inputmode="numeric">
-        </div>
+        <div id="products-container"></div>
     </div>
 
     <script>
-        function truncateDecimal(value) {
-            const num = parseFloat(value);
-            if (isNaN(num)) return '0';
-            return Math.trunc(num).toString();
+        function createProductRow() {
+            const row = document.createElement('div');
+            row.className = 'product-row';
+            row.setAttribute('data-testid', 'product-size');
+
+            ['length', 'width', 'height'].forEach(function(dim) {
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.className = 'dimension-input';
+                input.setAttribute('data-testid', dim);
+                input.step = '1';
+                input.min = '0';
+                input.placeholder = '0';
+                input.setAttribute('inputmode', 'numeric');
+                input.addEventListener('input', onInput);
+                row.appendChild(input);
+            });
+
+            return row;
         }
 
-        function updateTotalVolume() {
-            const lengthInput = document.getElementById('length');
-            const widthInput = document.getElementById('width');
-            const heightInput = document.getElementById('height');
-
-            // Truncate decimal values
-            const length = parseInt(truncateDecimal(lengthInput.value)) || 0;
-            const width = parseInt(truncateDecimal(widthInput.value)) || 0;
-            const height = parseInt(truncateDecimal(heightInput.value)) || 0;
-
-            // Update input values to truncated integers
-            lengthInput.value = length;
-            widthInput.value = width;
-            heightInput.value = height;
-
-            // Convert cm to meters, then calculate volume in m³
-            const volume = (length / 100) * (width / 100) * (height / 100);
-            document.getElementById('totalVolume').textContent = Math.round(volume);
+        function onInput(event) {
+            const input = event.target;
+            if (input.value !== '') {
+                const truncated = Math.trunc(parseFloat(input.value));
+                input.value = isNaN(truncated) ? '' : truncated;
+            }
+            updateAll();
         }
 
-        document.getElementById('length').addEventListener('input', updateTotalVolume);
-        document.getElementById('width').addEventListener('input', updateTotalVolume);
-        document.getElementById('height').addEventListener('input', updateTotalVolume);
+        function getRowVolume(row) {
+            const length = parseInt(row.querySelector('[data-testid="length"]').value) || 0;
+            const width = parseInt(row.querySelector('[data-testid="width"]').value) || 0;
+            const height = parseInt(row.querySelector('[data-testid="height"]').value) || 0;
+            return (length / 100) * (width / 100) * (height / 100);
+        }
+
+        function updateAll() {
+            const container = document.getElementById('products-container');
+            const rows = container.querySelectorAll('[data-testid="product-size"]');
+
+            let totalVolume = 0;
+            rows.forEach(function(row) {
+                totalVolume += getRowVolume(row);
+            });
+            document.getElementById('totalVolume').textContent = Math.round(totalVolume);
+
+            // Add a new empty row when all fields of the last row are filled
+            const lastRow = rows[rows.length - 1];
+            const lastLength = lastRow.querySelector('[data-testid="length"]').value;
+            const lastWidth = lastRow.querySelector('[data-testid="width"]').value;
+            const lastHeight = lastRow.querySelector('[data-testid="height"]').value;
+
+            if (lastLength !== '' && lastWidth !== '' && lastHeight !== '') {
+                container.appendChild(createProductRow());
+            }
+        }
+
+        // Initialise with one empty row
+        document.getElementById('products-container').appendChild(createProductRow());
     </script>
 </body>
 </html>
