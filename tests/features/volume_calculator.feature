@@ -4,7 +4,7 @@ Feature: Volume Calculator
 
     Scenario Outline: Calculate volume for a product
         Given a product with length "<length>" width "<width>" height "<height>"
-        Then the total volume should be "<expected>"
+        Then the total volume is "<expected>"
         And there are "1" products
         And last line is ready for the next product
 
@@ -28,7 +28,7 @@ Feature: Volume Calculator
     Scenario: Calculate volume for multiple products
         Given a product with length "550" width "777" height "125"
         And a product with length "200" width "300" height "400"
-        Then the total volume should be "77"
+        Then the total volume is "77"
         And there are "2" products
         And last line is ready for the next product
 
@@ -39,15 +39,15 @@ Feature: Volume Calculator
         When the volume is different than zero
         And there are "1" products
         Then I remove the first product
-        And the total volume should be "0"
+        And the total volume is "0"
 
     Scenario: Remove a product and reduce volume
         Given a product with length "527" width "557" height "536"
         And a product with length "436" width "648" height "232"
-        When the total volume should be "223"
+        When the total volume is "223"
         And there are "2" products
         And I remove the last product
-        Then the total volume should be "157"
+        Then the total volume is "157"
         And there are "1" products
 
     Scenario: No products but I press "remove"
@@ -55,3 +55,4 @@ Feature: Volume Calculator
         When I remove the first product
         Then there are "0" products
         And last line is ready for the next product
+        And the total volume is "0"

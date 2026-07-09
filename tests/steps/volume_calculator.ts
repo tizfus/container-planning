@@ -39,7 +39,7 @@ When('I check the volume', async function (this: CustomWorld) {
   await this.page!.getByTestId('totalVolume').isVisible();
 });
 
-Then('the total volume should be {string}', async function (this: CustomWorld, expected: string) {
+Then('the total volume is {string}', async function (this: CustomWorld, expected: string) {
   const totalVolumeText = await this.page!.getByTestId('totalVolume').textContent();
 
   expect(totalVolumeText).not.toBeNull();
