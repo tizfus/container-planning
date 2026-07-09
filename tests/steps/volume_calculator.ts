@@ -13,6 +13,28 @@ Given('a product with length {string} width {string} height {string}', async fun
   await this.page!.getByTestId('height').last().fill(height);
 });
 
+Given('a product with any size', async function (this: CustomWorld) {
+  const random = () => String(Math.floor(Math.random() * 900) + 100);
+  await this.page!.getByTestId('length').last().fill(random());
+  await this.page!.getByTestId('width').last().fill(random());
+  await this.page!.getByTestId('height').last().fill(random());
+});
+
+Given('no products', async function (this: CustomWorld) {
+  // Do nothing
+});
+
+Then('I remove the first product', async function (this: CustomWorld) {
+  await this.page!.getByTestId('remove-product').first().click();
+});
+
+Then('I remove the last product', async function (this: CustomWorld) {
+  const removeButtons = this.page!.getByTestId('remove-product');
+  const count = await removeButtons.count();
+  // -2 because it is the last product and index is zero based
+  await removeButtons.nth(count - 2).click();
+});
+
 When('I check the volume', async function (this: CustomWorld) {
   await this.page!.getByTestId('totalVolume').isVisible();
 });
@@ -68,11 +90,12 @@ When('there is at least a product', async function (this: CustomWorld) {
   expect(heightValue).not.toBe('');
 });
 
-Then('there should be {string} products', async function (this: CustomWorld, expected: string) {
+Then('there are {string} products', async function (this: CustomWorld, expected: string) {
   const productRows = this.page!.getByTestId('product-size');
-  // Subtract 1 to exclude the empty row for the next product
-  const count = await productRows.count() - 1; 
-  expect(count).toBe(parseInt(expected));
+  const count = await productRows.count();
+  // Subtract 1 to exclude the empty row for the next product (if it exists)
+  const actualCount = count > 0 ? count - 1 : 0;
+  expect(actualCount).toBe(parseInt(expected));
 });
 
 Then('last line is ready for the next product', async function (this: CustomWorld) {

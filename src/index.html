@@ -108,9 +108,29 @@
 
         .product-row {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-columns: 1fr 1fr 1fr auto;
             gap: 1rem;
             margin-bottom: 0.75rem;
+            align-items: center;
+        }
+
+        .remove-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            width: 36px;
+            height: 42px;
+            font-size: 1.25rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .remove-btn:hover {
+            background: #dc2626;
         }
     </style>
 </head>
@@ -150,6 +170,22 @@
                 input.addEventListener('input', onInput);
                 row.appendChild(input);
             });
+
+            const removeBtn = document.createElement('button');
+            removeBtn.textContent = '×';
+            removeBtn.setAttribute('data-testid', 'remove-product');
+            removeBtn.setAttribute('aria-label', 'Remove product');
+            removeBtn.className = 'remove-btn';
+            removeBtn.addEventListener('click', function() {
+                row.remove();
+                // Ensure at least one empty row always exists
+                const container = document.getElementById('products-container');
+                if (container.querySelectorAll('[data-testid="product-size"]').length === 0) {
+                    container.appendChild(createProductRow());
+                }
+                updateAll();
+            });
+            row.appendChild(removeBtn);
 
             return row;
         }
