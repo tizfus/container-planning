@@ -4,8 +4,6 @@ Feature: Volume Calculator
 
     Scenario Outline: Calculate volume for a product
         Given a product with length "<length>" width "<width>" height "<height>"
-        When the volume is different than zero
-        And there is at least a product
         Then the total volume should be "<expected>"
         And there should be "1" products
         And last line is ready for the next product
@@ -23,7 +21,6 @@ Feature: Volume Calculator
 
     Scenario: Decimal values are not allowed
         Given a product with length "200.9" width "200.9" height "200.9"
-        When I check size inputs
         Then length should be "200"
         And width should be "200"
         And the height should be "200"
@@ -31,8 +28,6 @@ Feature: Volume Calculator
     Scenario: Calculate volume for multiple products
         Given a product with length "550" width "777" height "125"
         And a product with length "200" width "300" height "400"
-        When the volume is different than zero
-        And there is at least a product
         Then the total volume should be "77"
         And there should be "2" products
         And last line is ready for the next product
