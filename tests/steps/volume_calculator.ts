@@ -116,6 +116,17 @@ Given('{int} products with length {string} width {string} height {string}', asyn
   await this.page!.getByTestId('height').last().fill(height);
 });
 
+When('I type {string} in the {word} field', async function (this: CustomWorld, text: string, field: string) {
+  const input = this.page!.getByTestId(field).first();
+  await input.clear();
+  await input.pressSequentially(text);
+});
+
+Then('the quantity should be {string}', async function (this: CustomWorld, expected: string) {
+  const value = await this.page!.getByTestId('quantity').first().inputValue();
+  expect(value).toBe(expected);
+});
+
 Then('there are {string} line', async function (this: CustomWorld, expected: string) {
   const productRows = this.page!.getByTestId('product-size');
   const count = await productRows.count();

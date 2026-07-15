@@ -25,6 +25,16 @@ Feature: Volume Calculator
         And width should be "200"
         And the height should be "200"
 
+    Scenario: Letters are not allowed in any field
+        When I type "abc123" in the length field
+        And I type "abc123" in the width field
+        And I type "abc123" in the height field
+        And I type "abc123" in the quantity field
+        Then length should be "123"
+        And width should be "123"
+        And the height should be "123"
+        And the quantity should be "123"
+
     Scenario: Calculate volume for multiple products
         Given a product with length "550" width "777" height "125"
         And a product with length "200" width "300" height "400"

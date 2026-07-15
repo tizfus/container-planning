@@ -84,14 +84,17 @@
         .dimension-input[data-testid="width"]::-webkit-outer-spin-button,
         .dimension-input[data-testid="width"]::-webkit-inner-spin-button,
         .dimension-input[data-testid="height"]::-webkit-outer-spin-button,
-        .dimension-input[data-testid="height"]::-webkit-inner-spin-button {
+        .dimension-input[data-testid="height"]::-webkit-inner-spin-button,
+        .dimension-input[data-testid="quantity"]::-webkit-outer-spin-button,
+        .dimension-input[data-testid="quantity"]::-webkit-inner-spin-button {
             -webkit-appearance: none;
             margin: 0;
         }
 
         .dimension-input[data-testid="length"],
         .dimension-input[data-testid="width"],
-        .dimension-input[data-testid="height"] {
+        .dimension-input[data-testid="height"],
+        .dimension-input[data-testid="quantity"] {
             -moz-appearance: textfield;
         }
 
@@ -213,6 +216,11 @@
                 input.placeholder = '0';
                 input.setAttribute('inputmode', 'numeric');
                 input.addEventListener('input', onInput);
+                input.addEventListener('beforeinput', function(e) {
+                    if (e.data && !/^[\d.]+$/.test(e.data)) {
+                        e.preventDefault();
+                    }
+                });
                 row.appendChild(input);
             });
 
@@ -226,6 +234,11 @@
             qtyInput.placeholder = '1';
             qtyInput.setAttribute('inputmode', 'numeric');
             qtyInput.addEventListener('input', onInput);
+            qtyInput.addEventListener('beforeinput', function(e) {
+                if (e.data && !/^[\d.]+$/.test(e.data)) {
+                    e.preventDefault();
+                }
+            });
             row.appendChild(qtyInput);
 
             const removeBtn = document.createElement('button');
