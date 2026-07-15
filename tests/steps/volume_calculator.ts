@@ -2,15 +2,15 @@ import { Given, When, Then } from '@cucumber/cucumber';
 import CustomWorld from "../support/world";
 import { expect } from '@playwright/test';
 
-Given('a product with length {string} width {string} height {string}', async function (
+Given('a product with length {float} width {float} height {float}', async function (
   this: CustomWorld,
-  length: string,
-  width: string,
-  height: string
+  length: number,
+  width: number,
+  height: number
 ) { 
-  await this.page!.getByTestId('length').last().fill(length);
-  await this.page!.getByTestId('width').last().fill(width);
-  await this.page!.getByTestId('height').last().fill(height);
+  await this.page!.getByTestId('length').last().fill(String(length));
+  await this.page!.getByTestId('width').last().fill(String(width));
+  await this.page!.getByTestId('height').last().fill(String(height));
 });
 
 Given('a product with any size', async function (this: CustomWorld) {
@@ -39,13 +39,13 @@ When('I check the volume', async function (this: CustomWorld) {
   await this.page!.getByTestId('totalVolume').isVisible();
 });
 
-Then('the total volume is {string}', async function (this: CustomWorld, expected: string) {
+Then('the total volume is {int}', async function (this: CustomWorld, expected: number) {
   const totalVolumeText = await this.page!.getByTestId('totalVolume').textContent();
 
   expect(totalVolumeText).not.toBeNull();
 
   const totalVolume = parseFloat(totalVolumeText!);
-  const expectedVolume = parseFloat(expected);
+  const expectedVolume = parseFloat(String(expected));
   
   expect(totalVolume).toBeCloseTo(expectedVolume, 5);
 });
@@ -56,19 +56,19 @@ When('I check size inputs', async function (this: CustomWorld) {
   await this.page!.getByTestId('height').first().isVisible();
 });
 
-Then('length should be {string}', async function (this: CustomWorld, expected: string) {
+Then('length should be {int}', async function (this: CustomWorld, expected: number) {
   const value = await this.page!.getByTestId('length').first().inputValue();
-  expect(value).toBe(expected);
+  expect(value).toBe(String(expected));
 });
 
-Then('width should be {string}', async function (this: CustomWorld, expected: string) {
+Then('width should be {int}', async function (this: CustomWorld, expected: number) {
   const value = await this.page!.getByTestId('width').first().inputValue();
-  expect(value).toBe(expected);
+  expect(value).toBe(String(expected));
 });
 
-Then('the height should be {string}', async function (this: CustomWorld, expected: string) {
+Then('the height should be {int}', async function (this: CustomWorld, expected: number) {
   const value = await this.page!.getByTestId('height').first().inputValue();
-  expect(value).toBe(expected);
+  expect(value).toBe(String(expected));
 });
 
 When('the volume is different than zero', async function (this: CustomWorld) {
@@ -103,17 +103,17 @@ Then('last line is ready for the next product', async function (this: CustomWorl
   expect(heightValue).toBe('');
 });
 
-Given('{int} products with length {string} width {string} height {string}', async function (
+Given('{int} products with length {int} width {int} height {int}', async function (
   this: CustomWorld,
   quantity: number,
-  length: string,
-  width: string,
-  height: string
+  length: number,
+  width: number,
+  height: number
 ) {
   await this.page!.getByTestId('quantity').last().fill(String(quantity));
-  await this.page!.getByTestId('length').last().fill(length);
-  await this.page!.getByTestId('width').last().fill(width);
-  await this.page!.getByTestId('height').last().fill(height);
+  await this.page!.getByTestId('length').last().fill(String(length));
+  await this.page!.getByTestId('width').last().fill(String(width));
+  await this.page!.getByTestId('height').last().fill(String(height));
 });
 
 When('I type {string} in the {word} field', async function (this: CustomWorld, text: string, field: string) {
@@ -122,15 +122,15 @@ When('I type {string} in the {word} field', async function (this: CustomWorld, t
   await input.pressSequentially(text);
 });
 
-Then('the quantity should be {string}', async function (this: CustomWorld, expected: string) {
+Then('the quantity should be {int}', async function (this: CustomWorld, expected: number) {
   const value = await this.page!.getByTestId('quantity').first().inputValue();
-  expect(value).toBe(expected);
+  expect(value).toBe(String(expected));
 });
 
-Then('there are {string} line', async function (this: CustomWorld, expected: string) {
+Then('there are {int} line', async function (this: CustomWorld, expected: number) {
   const productRows = this.page!.getByTestId('product-size');
   const count = await productRows.count();
   // Subtract 1 to exclude the empty row for the next product
   const actualCount = count > 0 ? count - 1 : 0;
-  expect(actualCount).toBe(parseInt(expected));
+  expect(actualCount).toBe(expected);
 });
