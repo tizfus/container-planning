@@ -77,24 +77,27 @@
             border-radius: 6px;
             font-size: 1rem;
             transition: border-color 0.2s, box-shadow 0.2s;
-            -moz-appearance: textfield;
         }
 
-        .dimension-input::-webkit-outer-spin-button,
-        .dimension-input::-webkit-inner-spin-button {
+        .dimension-input[data-testid="length"]::-webkit-outer-spin-button,
+        .dimension-input[data-testid="length"]::-webkit-inner-spin-button,
+        .dimension-input[data-testid="width"]::-webkit-outer-spin-button,
+        .dimension-input[data-testid="width"]::-webkit-inner-spin-button,
+        .dimension-input[data-testid="height"]::-webkit-outer-spin-button,
+        .dimension-input[data-testid="height"]::-webkit-inner-spin-button {
             -webkit-appearance: none;
             margin: 0;
         }
 
-        .dimension-input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+        .dimension-input[data-testid="length"],
+        .dimension-input[data-testid="width"],
+        .dimension-input[data-testid="height"] {
+            -moz-appearance: textfield;
         }
 
         .products-header {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-columns: 1fr 1fr 1fr 80px auto;
             gap: 1rem;
             margin-bottom: 0.5rem;
             padding: 0 0.25rem;
@@ -108,10 +111,49 @@
 
         .product-row {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr auto;
+            grid-template-columns: 1fr 1fr 1fr 80px auto;
             gap: 1rem;
             margin-bottom: 0.75rem;
             align-items: center;
+        }
+
+        .quantity-control {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .qty-btn {
+            width: 28px;
+            height: 18px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            background: #f9f9f9;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: #555;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .qty-btn:hover {
+            background: #e9e9e9;
+            border-color: #667eea;
+        }
+
+        .qty-value {
+            width: 100%;
+            text-align: center;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #333;
+            padding: 4px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #fff;
         }
 
         .remove-btn {
@@ -148,6 +190,7 @@
             <span>Length (cm)</span>
             <span>Width (cm)</span>
             <span>Height (cm)</span>
+            <span>Qty</span>
         </div>
         <div id="products-container"></div>
     </div>
@@ -170,6 +213,18 @@
                 input.addEventListener('input', onInput);
                 row.appendChild(input);
             });
+
+            const qtyInput = document.createElement('input');
+            qtyInput.type = 'number';
+            qtyInput.className = 'dimension-input';
+            qtyInput.setAttribute('data-testid', 'quantity');
+            qtyInput.step = '1';
+            qtyInput.min = '0';
+            qtyInput.value = '1';
+            qtyInput.placeholder = '1';
+            qtyInput.setAttribute('inputmode', 'numeric');
+            qtyInput.addEventListener('input', onInput);
+            row.appendChild(qtyInput);
 
             const removeBtn = document.createElement('button');
             removeBtn.textContent = '×';
@@ -200,10 +255,11 @@
         }
 
         function getRowVolume(row) {
+            const quantity = parseInt(row.querySelector('[data-testid="quantity"]').value) || 0;
             const length = parseInt(row.querySelector('[data-testid="length"]').value) || 0;
             const width = parseInt(row.querySelector('[data-testid="width"]').value) || 0;
             const height = parseInt(row.querySelector('[data-testid="height"]').value) || 0;
-            return (length / 100) * (width / 100) * (height / 100);
+            return quantity * (length / 100) * (width / 100) * (height / 100);
         }
 
         function updateAll() {
