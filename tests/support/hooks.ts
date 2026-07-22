@@ -1,5 +1,6 @@
-import { Before, After, setDefaultTimeout, setWorldConstructor } from '@cucumber/cucumber';
+import { Before, After, setDefaultTimeout, setWorldConstructor, ITestCaseHookParameter } from '@cucumber/cucumber';
 import CustomWorld from './world';
+import * as fs from 'fs';
 
 setWorldConstructor(CustomWorld);
 setDefaultTimeout(60000);
@@ -22,6 +23,12 @@ Before(async function (this: CustomWorld) {
     await this.page.goto(getBaseUrl());
 });
 
-After(async function (this: CustomWorld) {
+After(async function (this: CustomWorld, scenario: ITestCaseHookParameter) {
+    const video = this.page.video();
     await this.close();
+
+    if (scenario.result?.status !== 'FAILED' && video) {
+        const videoPath = await video.path();
+        fs.unlinkSync(videoPath);
+    }
 });

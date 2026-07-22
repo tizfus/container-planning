@@ -3,9 +3,303 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Page</title>
+    <title>Container Planning</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f0f2f5;
+            color: #333;
+            padding: 2rem;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #1a1a2e;
+        }
+
+        .total-volume {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .total-volume h2 {
+            font-size: 1rem;
+            font-weight: 400;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .total-volume .value {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .total-volume .unit {
+            font-size: 1rem;
+            opacity: 0.85;
+            margin-left: 0.25rem;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 0.5rem;
+        }
+
+        .dimension-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .dimension-input[data-testid="length"]::-webkit-outer-spin-button,
+        .dimension-input[data-testid="length"]::-webkit-inner-spin-button,
+        .dimension-input[data-testid="width"]::-webkit-outer-spin-button,
+        .dimension-input[data-testid="width"]::-webkit-inner-spin-button,
+        .dimension-input[data-testid="height"]::-webkit-outer-spin-button,
+        .dimension-input[data-testid="height"]::-webkit-inner-spin-button,
+        .dimension-input[data-testid="quantity"]::-webkit-outer-spin-button,
+        .dimension-input[data-testid="quantity"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .dimension-input[data-testid="length"],
+        .dimension-input[data-testid="width"],
+        .dimension-input[data-testid="height"],
+        .dimension-input[data-testid="quantity"] {
+            -moz-appearance: textfield;
+        }
+
+        #products-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 80px auto;
+            column-gap: 1rem;
+            row-gap: 0.75rem;
+            align-items: center;
+        }
+
+        .products-header {
+            display: contents;
+        }
+
+        .products-header span {
+            font-weight: 500;
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        .product-row {
+            display: contents;
+        }
+
+        .quantity-control {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .qty-btn {
+            width: 28px;
+            height: 18px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            background: #f9f9f9;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            color: #555;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .qty-btn:hover {
+            background: #e9e9e9;
+            border-color: #667eea;
+        }
+
+        .qty-value {
+            width: 100%;
+            text-align: center;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #333;
+            padding: 4px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #fff;
+        }
+
+        .remove-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            width: 36px;
+            height: 42px;
+            font-size: 1.25rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .remove-btn:hover {
+            background: #dc2626;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome</h1>
+    <h1>Volume Calculator</h1>
+
+    <div class="total-volume">
+        <h2>Total Volume</h2>
+        <span class="value" id="totalVolume" data-testid="totalVolume">0</span>
+        <span class="unit">m³</span>
+    </div>
+
+    <div class="form-container">
+        <div id="products-container">
+            <div class="products-header">
+                <span>Length (cm)</span>
+                <span>Width (cm)</span>
+                <span>Height (cm)</span>
+                <span>Qty</span>
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function createProductRow() {
+            const row = document.createElement('div');
+            row.className = 'product-row';
+            row.setAttribute('data-testid', 'product-size');
+
+            ['length', 'width', 'height'].forEach(function(dim) {
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.className = 'dimension-input';
+                input.setAttribute('data-testid', dim);
+                input.step = '1';
+                input.min = '0';
+                input.placeholder = '0';
+                input.setAttribute('inputmode', 'numeric');
+                input.addEventListener('input', onInput);
+                input.addEventListener('beforeinput', function(e) {
+                    if (e.data && !/^[\d.]+$/.test(e.data)) {
+                        e.preventDefault();
+                    }
+                });
+                row.appendChild(input);
+            });
+
+            const qtyInput = document.createElement('input');
+            qtyInput.type = 'number';
+            qtyInput.className = 'dimension-input';
+            qtyInput.setAttribute('data-testid', 'quantity');
+            qtyInput.step = '1';
+            qtyInput.min = '0';
+            qtyInput.value = '1';
+            qtyInput.placeholder = '1';
+            qtyInput.setAttribute('inputmode', 'numeric');
+            qtyInput.addEventListener('input', onInput);
+            qtyInput.addEventListener('beforeinput', function(e) {
+                if (e.data && !/^[\d.]+$/.test(e.data)) {
+                    e.preventDefault();
+                }
+            });
+            row.appendChild(qtyInput);
+
+            const removeBtn = document.createElement('button');
+            removeBtn.textContent = '×';
+            removeBtn.setAttribute('data-testid', 'remove-product');
+            removeBtn.setAttribute('aria-label', 'Remove product');
+            removeBtn.className = 'remove-btn';
+            removeBtn.addEventListener('click', function() {
+                row.remove();
+                // Ensure at least one empty row always exists
+                const container = document.getElementById('products-container');
+                if (container.querySelectorAll('[data-testid="product-size"]').length === 0) {
+                    container.appendChild(createProductRow());
+                }
+                updateAll();
+            });
+            row.appendChild(removeBtn);
+
+            return row;
+        }
+
+        function onInput(event) {
+            const input = event.target;
+            if (input.value !== '') {
+                const truncated = Math.trunc(parseFloat(input.value));
+                input.value = isNaN(truncated) ? '' : truncated;
+            }
+            updateAll();
+        }
+
+        function getRowVolume(row) {
+            const quantity = parseInt(row.querySelector('[data-testid="quantity"]').value) || 0;
+            const length = parseInt(row.querySelector('[data-testid="length"]').value) || 0;
+            const width = parseInt(row.querySelector('[data-testid="width"]').value) || 0;
+            const height = parseInt(row.querySelector('[data-testid="height"]').value) || 0;
+            return quantity * (length / 100) * (width / 100) * (height / 100);
+        }
+
+        function updateAll() {
+            const container = document.getElementById('products-container');
+            const rows = container.querySelectorAll('[data-testid="product-size"]');
+
+            let totalVolume = 0;
+            rows.forEach(function(row) {
+                totalVolume += getRowVolume(row);
+            });
+            document.getElementById('totalVolume').textContent = Math.round(totalVolume);
+
+            // Add a new empty row when all fields of the last row are filled
+            const lastRow = rows[rows.length - 1];
+            const lastLength = lastRow.querySelector('[data-testid="length"]').value;
+            const lastWidth = lastRow.querySelector('[data-testid="width"]').value;
+            const lastHeight = lastRow.querySelector('[data-testid="height"]').value;
+
+            if (lastLength !== '' && lastWidth !== '' && lastHeight !== '') {
+                container.appendChild(createProductRow());
+            }
+        }
+
+        // Initialise with one empty row
+        document.getElementById('products-container').appendChild(createProductRow());
+    </script>
 </body>
 </html>
