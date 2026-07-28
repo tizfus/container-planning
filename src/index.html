@@ -235,6 +235,10 @@
             opacity: 0.85;
             margin-left: 0.25rem;
         }
+
+        .container-volume.overflow .value {
+            color: #ff0000;
+        }
     </style>
 </head>
 <body>
@@ -365,7 +369,9 @@
 
             const containerSelect = document.getElementById('container-select');
             const capacity = CONTAINER_CAPACITIES[containerSelect.value] || 0;
-            document.getElementById('containerVolume').textContent = capacity;
+            const containerVolumeEl = document.getElementById('containerVolume');
+            containerVolumeEl.textContent = capacity;
+            containerVolumeEl.closest('.container-volume').classList.toggle('overflow', roundedTotal > capacity);
 
             // Add a new empty row when all fields of the last row are filled
             const lastRow = rows[rows.length - 1];
