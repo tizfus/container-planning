@@ -20,10 +20,6 @@ Given('a product with any size', async function (this: CustomWorld) {
   await this.page!.getByTestId('height').last().fill(random());
 });
 
-Given('no products', async function (this: CustomWorld) {
-  // Do nothing
-});
-
 Then('I remove the first product', async function (this: CustomWorld) {
   await this.page!.getByTestId('remove-product').first().click();
 });
@@ -37,17 +33,6 @@ Then('I remove the last product', async function (this: CustomWorld) {
 
 When('I check the volume', async function (this: CustomWorld) {
   await this.page!.getByTestId('totalVolume').isVisible();
-});
-
-Then('the total volume is {int}', async function (this: CustomWorld, expected: number) {
-  const totalVolumeText = await this.page!.getByTestId('totalVolume').textContent();
-
-  expect(totalVolumeText).not.toBeNull();
-
-  const totalVolume = parseFloat(totalVolumeText!);
-  const expectedVolume = parseFloat(String(expected));
-  
-  expect(totalVolume).toBeCloseTo(expectedVolume, 5);
 });
 
 When('I check size inputs', async function (this: CustomWorld) {

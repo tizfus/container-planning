@@ -177,6 +177,68 @@
         .remove-btn:hover {
             background: #dc2626;
         }
+
+        .container-selector {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            padding: 1rem 2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .container-selector label {
+            font-weight: 500;
+            color: #555;
+        }
+
+        .container-selector select {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            background: #f9f9f9;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .container-selector select:hover {
+            border-color: #667eea;
+        }
+
+        .container-volume {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .container-volume h2 {
+            font-size: 1rem;
+            font-weight: 400;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .container-volume .value {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .container-volume .unit {
+            font-size: 1rem;
+            opacity: 0.85;
+            margin-left: 0.25rem;
+        }
+
+        .container-volume.overflow .value {
+            color: #ff0000;
+        }
     </style>
 </head>
 <body>
@@ -185,6 +247,19 @@
     <div class="total-volume">
         <h2>Total Volume</h2>
         <span class="value" id="totalVolume" data-testid="totalVolume">0</span>
+        <span class="unit">m³</span>
+    </div>
+
+    <div class="container-selector">
+        <label for="container-select">Container</label>
+        <select id="container-select" data-testid="container-select">
+            <option value="20ft">20ft (33 m³)</option>
+        </select>
+    </div>
+
+    <div class="container-volume">
+        <h2>Container Volume</h2>
+        <span class="value" id="containerVolume" data-testid="containerVolume">33</span>
         <span class="unit">m³</span>
     </div>
 
@@ -201,6 +276,10 @@
     </div>
 
     <script>
+        const CONTAINER_CAPACITIES = {
+            '20ft': 33
+        };
+
         function createProductRow() {
             const row = document.createElement('div');
             row.className = 'product-row';
@@ -285,7 +364,14 @@
             rows.forEach(function(row) {
                 totalVolume += getRowVolume(row);
             });
-            document.getElementById('totalVolume').textContent = Math.round(totalVolume);
+            const roundedTotal = Math.round(totalVolume);
+            document.getElementById('totalVolume').textContent = roundedTotal;
+
+            const containerSelect = document.getElementById('container-select');
+            const capacity = CONTAINER_CAPACITIES[containerSelect.value] || 0;
+            const containerVolumeEl = document.getElementById('containerVolume');
+            containerVolumeEl.textContent = capacity;
+            containerVolumeEl.closest('.container-volume').classList.toggle('overflow', roundedTotal > capacity);
 
             // Add a new empty row when all fields of the last row are filled
             const lastRow = rows[rows.length - 1];
@@ -300,6 +386,9 @@
 
         // Initialise with one empty row
         document.getElementById('products-container').appendChild(createProductRow());
+
+        // Update remaining volume when container selection changes
+        document.getElementById('container-select').addEventListener('change', updateAll);
     </script>
 </body>
 </html>
