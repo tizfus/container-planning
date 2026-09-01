@@ -17,6 +17,7 @@
 
     function pack(container, products) {
         const layers = [];
+        let overfilled = false;
 
         const items = [];
         products.forEach(function(product) {
@@ -43,10 +44,12 @@
 
         items.forEach(function(item) {
             if (item.length > container.length || item.width > container.width) {
+                overfilled = true;
                 return;
             }
 
             if (currentZ + item.height > container.height) {
+                overfilled = true;
                 return;
             }
 
@@ -67,6 +70,7 @@
                 rowHeight = 0;
 
                 if (currentZ + item.height > container.height) {
+                    overfilled = true;
                     return;
                 }
             }
@@ -89,18 +93,19 @@
             layers.push(currentLayer);
         }
 
-        return layers;
+        return {
+            layers: layers,
+            overfilled: overfilled
+        };
     }
 
-    const ContainerView = {
-        ProductPlacement: ProductPlacement,
-        Layer: Layer,
+    const Container = {
         pack: pack
     };
 
     if (typeof module !== 'undefined' && module.exports) {
-        module.exports = ContainerView;
+        module.exports = Container;
     } else {
-        global.ContainerView = ContainerView;
+        global.Container = Container;
     }
 })(typeof window !== 'undefined' ? window : globalThis);
