@@ -42,3 +42,7 @@ Then('there are {int} layers', function (count: number) {
 Then('layer no. {int} has {int} products', function (index: number, count: number) {
   expect(result.layers[index - 1].placements.length).toBe(count);
 });
+
+Then('container is overfilled', function () {
+  expect(result.overfilled).toBe(true);
+});
