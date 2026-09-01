@@ -1,4 +1,4 @@
-import { Given, When, Then, After } from '@cucumber/cucumber';
+import { Given, When, Then, Before } from '@cucumber/cucumber';
 import { expect } from '@playwright/test';
 
 const ContainerView = require('../../src/container-view');
@@ -6,6 +6,13 @@ const ContainerView = require('../../src/container-view');
 let container: any;
 let products: any[];
 let layers: any[];
+
+Before(function(){
+    container = undefined;
+    products = [];
+    layers = undefined!;
+})
+
 
 Given('a container with length {int}cm width {int}cm height {int}cm', function (
   length: number,
@@ -21,7 +28,7 @@ Given('{int} products have length {int}cm width {int}cm height {int}cm', functio
   width: number,
   height: number
 ) {
-  products = [{ length, width, height, quantity }];
+  products.push({ length, width, height, quantity });
 });
 
 When('products are packed', function () {
@@ -32,12 +39,6 @@ Then('there are {int} layers', function (count: number) {
   expect(layers.length).toBe(count);
 });
 
-Then('the first layer should have {int} products', function (count: number) {
-  expect(layers[0].placements.length).toBe(count);
+Then('layer no. {int} has {int} products', function (index: number, count: number) {
+  expect(layers[index - 1].placements.length).toBe(count);
 });
-
-After(function(){
-    container = undefined;
-    products = undefined!;
-    layers = undefined!;
-})
