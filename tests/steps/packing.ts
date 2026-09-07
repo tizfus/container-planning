@@ -44,5 +44,5 @@ Then('layer no. {int} has {int} products', function (index: number, count: numbe
 });
 
 Then('container is overfilled', function () {
-  expect(result.overfilled).toBe(true);
+  expect(result.isOverfilled).toBe(true);
 });

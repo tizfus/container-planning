@@ -95,7 +95,7 @@
 
         return {
             layers: layers,
-            overfilled: overfilled
+            isOverfilled: overfilled
         };
     }
 
