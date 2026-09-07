@@ -93,10 +93,8 @@
             layers.push(currentLayer);
         }
 
-        return {
-            layers: layers,
-            isOverfilled: overfilled
-        };
+        Container.layers = layers;
+        Container.isOverfilled = overfilled;
     }
 
     const Container = {

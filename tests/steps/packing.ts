@@ -5,12 +5,10 @@ const Container = require('../../src/container-view');
 
 let container: any;
 let products: any[];
-let result: any;
 
 Before(function(){
     container = undefined;
     products = [];
-    result = undefined!;
 })
 
 
@@ -32,17 +30,17 @@ Given('{int} products have length {int}cm width {int}cm height {int}cm', functio
 });
 
 When('products are packed', function () {
-  result = Container.pack(container, products);
+  Container.pack(container, products);
 });
 
 Then('there are {int} layers', function (count: number) {
-  expect(result.layers.length).toBe(count);
+  expect(Container.layers.length).toBe(count);
 });
 
 Then('layer no. {int} has {int} products', function (index: number, count: number) {
-  expect(result.layers[index - 1].placements.length).toBe(count);
+  expect(Container.layers[index - 1].placements.length).toBe(count);
 });
 
 Then('container is overfilled', function () {
-  expect(result.isOverfilled).toBe(true);
+  expect(Container.isOverfilled).toBe(true);
 });
