@@ -275,9 +275,16 @@
         </div>
     </div>
 
+    <div id="layers" data-testid="layers" hidden></div>
+
+    <script src="container-view.js"></script>
     <script>
         const CONTAINER_CAPACITIES = {
             '20ft': 33
+        };
+
+        const CONTAINER_DIMENSIONS = {
+            '20ft': { length: 590, width: 235, height: 239 }
         };
 
         function createProductRow() {
@@ -373,6 +380,21 @@
             containerVolumeEl.textContent = capacity;
             containerVolumeEl.closest('.container-volume').classList.toggle('overflow', roundedTotal > capacity);
 
+            // Compute the packing layers from the products entered in the UI
+            const containerDimensions = CONTAINER_DIMENSIONS[containerSelect.value];
+            const products = [];
+            rows.forEach(function(row) {
+                const quantity = parseInt(row.querySelector('[data-testid="quantity"]').value) || 0;
+                const length = parseInt(row.querySelector('[data-testid="length"]').value) || 0;
+                const width = parseInt(row.querySelector('[data-testid="width"]').value) || 0;
+                const height = parseInt(row.querySelector('[data-testid="height"]').value) || 0;
+                if (quantity > 0 && length > 0 && width > 0 && height > 0) {
+                    products.push({ length, width, height, quantity });
+                }
+            });
+            Container.pack(containerDimensions, products);
+            renderLayers(Container.layers);
+
             // Add a new empty row when all fields of the last row are filled
             const lastRow = rows[rows.length - 1];
             const lastLength = lastRow.querySelector('[data-testid="length"]').value;
@@ -382,6 +404,29 @@
             if (lastLength !== '' && lastWidth !== '' && lastHeight !== '') {
                 container.appendChild(createProductRow());
             }
+        }
+
+        function renderLayers(layers) {
+            const layersEl = document.getElementById('layers');
+            layersEl.innerHTML = '';
+
+            if (!layers || layers.length === 0) {
+                return;
+            }
+
+            layers.forEach(function(layer) {
+                const layerEl = document.createElement('div');
+                layerEl.setAttribute('data-testid', 'layer');
+
+                layer.placements.forEach(function(placement) {
+                    const productEl = document.createElement('span');
+                    productEl.setAttribute('data-testid', 'layer-product');
+                    productEl.textContent = placement.length + 'x' + placement.width + 'x' + placement.height;
+                    layerEl.appendChild(productEl);
+                });
+
+                layersEl.appendChild(layerEl);
+            });
         }
 
         // Initialise with one empty row
