@@ -378,7 +378,6 @@
             const capacity = CONTAINER_CAPACITIES[containerSelect.value] || 0;
             const containerVolumeEl = document.getElementById('containerVolume');
             containerVolumeEl.textContent = capacity;
-            containerVolumeEl.closest('.container-volume').classList.toggle('overflow', roundedTotal > capacity);
 
             // Compute the packing layers from the products entered in the UI
             const containerDimensions = CONTAINER_DIMENSIONS[containerSelect.value];
@@ -394,6 +393,13 @@
             });
             Container.pack(containerDimensions, products);
             renderLayers(Container.layers);
+
+            // Mark the container as overfilled when the total volume exceeds the
+            // capacity OR when a product cannot physically fit in the container
+            containerVolumeEl.closest('.container-volume').classList.toggle(
+                'overflow',
+                roundedTotal > capacity || Container.isOverfilled
+            );
 
             // Add a new empty row when all fields of the last row are filled
             const lastRow = rows[rows.length - 1];

@@ -34,7 +34,19 @@ Feature: Container packing
     Then there are 1 layers
     And layer no. 1 has 2 products
 
+  Scenario: Single product but too long and cannot be placed in the container
+    Given 1 products with length 591 width 235 height 240
+    When the 20ft container is selected
+    Then there are 0 layers
+    And container is overfilled
+
   Scenario: Single product but too large and cannot be placed in the container
+    Given 1 products with length 590 width 236 height 239
+    When the 20ft container is selected
+    Then there are 0 layers
+    And container is overfilled
+
+    Scenario: Single product but too tall and cannot be placed in the container
     Given 1 products with length 590 width 235 height 240
     When the 20ft container is selected
     Then there are 0 layers

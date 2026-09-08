@@ -10,7 +10,7 @@ Feature: Container Selection
 
 
     Scenario: I reach the maximum volume of the container
-        Given a product with length 320 width 320 height 320
+        Given a product with length 590 width 235 height 239
         When the 20ft container is selected
         Then the container volume element is white
 
