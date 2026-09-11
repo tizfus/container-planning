@@ -38,12 +38,67 @@
         let currentLayer = new Layer(layerIndex, []);
         let currentZ = 0;
         let layerHeight = 0;
-        let cursorX = 0;
-        let cursorY = 0;
-        let rowHeight = 0;
+        let freeRects = [{
+            x: 0,
+            y: 0,
+            w: container.length,
+            h: container.width
+        }];
+
+        function fitsInContainer(item) {
+            return (item.length <= container.length && item.width <= container.width) ||
+                (item.width <= container.length && item.length <= container.width);
+        }
+
+        function splitFreeRect(rect, l, w) {
+            const rightW = rect.w - l;
+            if (rightW > 0) {
+                freeRects.push({ x: rect.x + l, y: rect.y, w: rightW, h: rect.h });
+            }
+            const belowH = rect.h - w;
+            if (belowH > 0) {
+                freeRects.push({ x: rect.x, y: rect.y + w, w: rect.w, h: belowH });
+            }
+        }
+
+        function tryPlace(item) {
+            const orientations = [
+                { length: item.length, width: item.width },
+                { length: item.width, width: item.length }
+            ];
+
+            for (let o = 0; o < orientations.length; o++) {
+                const l = orientations[o].length;
+                const w = orientations[o].width;
+
+                if (l > container.length || w > container.width) {
+                    continue;
+                }
+
+                for (let i = 0; i < freeRects.length; i++) {
+                    const rect = freeRects[i];
+                    if (l <= rect.w && w <= rect.h) {
+                        currentLayer.placements.push(new ProductPlacement(
+                            rect.x,
+                            rect.y,
+                            currentZ,
+                            l,
+                            w,
+                            item.height
+                        ));
+                        freeRects.splice(i, 1);
+                        splitFreeRect(rect, l, w);
+                        layerHeight = Math.max(layerHeight, item.height);
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
 
         items.forEach(function(item) {
-            if (item.length > container.length || item.width > container.width) {
+            if (!fitsInContainer(item)) {
                 overfilled = true;
                 return;
             }
@@ -53,40 +108,32 @@
                 return;
             }
 
-            if (cursorX + item.length > container.length) {
-                cursorX = 0;
-                cursorY += rowHeight;
-                rowHeight = 0;
-            }
+            if (!tryPlace(item)) {
+                if (currentLayer.placements.length > 0) {
+                    layers.push(currentLayer);
+                }
 
-            if (cursorY + item.width > container.width) {
-                layers.push(currentLayer);
-                layerIndex++;
-                currentLayer = new Layer(layerIndex, []);
                 currentZ += layerHeight;
-                layerHeight = 0;
-                cursorX = 0;
-                cursorY = 0;
-                rowHeight = 0;
-
                 if (currentZ + item.height > container.height) {
                     overfilled = true;
                     return;
                 }
+
+                layerIndex++;
+                currentLayer = new Layer(layerIndex, []);
+                layerHeight = 0;
+                freeRects = [{
+                    x: 0,
+                    y: 0,
+                    w: container.length,
+                    h: container.width
+                }];
+
+                if (!tryPlace(item)) {
+                    overfilled = true;
+                    return;
+                }
             }
-
-            currentLayer.placements.push(new ProductPlacement(
-                cursorX,
-                cursorY,
-                currentZ,
-                item.length,
-                item.width,
-                item.height
-            ));
-
-            cursorX += item.length;
-            rowHeight = Math.max(rowHeight, item.width);
-            layerHeight = Math.max(layerHeight, item.height);
         });
 
         if (currentLayer.placements.length > 0) {

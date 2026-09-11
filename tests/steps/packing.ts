@@ -24,3 +24,9 @@ Then('container is overfilled', async function (this: CustomWorld) {
   const color = await element.evaluate(el => window.getComputedStyle(el).color);
   expect(color).toBe('rgb(255, 0, 0)');
 });
+
+Then('container still has space', async function (this: CustomWorld) {
+  const element = this.page!.getByTestId('containerVolume');
+  const color = await element.evaluate(el => window.getComputedStyle(el).color);
+  expect(color).toBe('rgb(255, 255, 255)');
+});

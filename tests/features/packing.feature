@@ -15,6 +15,19 @@ Feature: Container packing
     Then there are 1 layers
     And layer no. 1 has 1 products
 
+  Scenario Outline: Single product with one dimension too large cannot be placed in the container
+    Given 1 products with length <length> width <width> height <height>
+    When the 20ft container is selected
+    Then there are 0 layers
+    And container is overfilled
+
+    Examples:
+      | length | width | height | reason |
+      | 591    | 235   | 240    | too long |
+      | 236    | 236   | 239    | too long |
+      | 590    | 236   | 239    | too wide and too long |
+      | 590    | 235   | 240    | too tall |
+
   Scenario: Two products with half of the height of the container, should fill the entire container
     Given 2 products with length 590 width 235 height 119
     When the 20ft container is selected
@@ -34,14 +47,16 @@ Feature: Container packing
     Then there are 1 layers
     And layer no. 1 has 2 products
 
-  Scenario Outline: Single product with one dimension too large cannot be placed in the container
-    Given 1 products with length <length> width <width> height <height>
+  
+  Scenario: Single product with width too large can be rotated
+    Given 1 products with length 235 width 236 height 239
     When the 20ft container is selected
-    Then there are 0 layers
-    And container is overfilled
+    Then container still has space
+    And there are 1 layers
 
-    Examples:
-      | length | width | height | reason |
-      | 591    | 235   | 240    | too long |
-      | 590    | 236   | 239    | too wide |
-      | 590    | 235   | 240    | too tall |
+  Scenario: Single product with length too large can be rotated
+    Given 1 products with length 377 width 235 height 239 
+    And 1 products with length 235 width 61 height 239
+    When the 20ft container is selected
+    Then container still has space
+    And there are 1 layers
