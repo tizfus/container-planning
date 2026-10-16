@@ -20,7 +20,7 @@ This project is a **plain JavaScript/HTML** single-page application for planning
 After any change, tests **must** be run and **all must pass**:
 
 ```bash
-npm --prefix ./tests/ 
+npm --prefix ./tests/ run test
 ```
 
 Do not consider a change complete until every test is green.

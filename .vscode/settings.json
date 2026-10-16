@@ -5,5 +5,11 @@
     "cucumber.glue": [
         "tests/steps/*.ts",
         "tests/support/*.ts"
-    ]
+    ],
+    "chat.tools.terminal.autoApprove": {
+        "/^npm --prefix \\./tests/ run test$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
 }

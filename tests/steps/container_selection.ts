@@ -2,7 +2,7 @@ import { Given, Then } from '@cucumber/cucumber';
 import CustomWorld from "../support/world";
 import { expect } from '@playwright/test';
 
-Then('the 20ft container is selected', async function (this: CustomWorld) {
+Then('the 20ft container is the selected container', async function (this: CustomWorld) {
   const select = this.page!.getByTestId('container-select');
   await select.isVisible();
   const selectedValue = await select.inputValue();

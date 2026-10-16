@@ -2,17 +2,6 @@ import { Given, When, Then } from '@cucumber/cucumber';
 import CustomWorld from "../support/world";
 import { expect } from '@playwright/test';
 
-Given('a product with length {float} width {float} height {float}', async function (
-  this: CustomWorld,
-  length: number,
-  width: number,
-  height: number
-) { 
-  await this.page!.getByTestId('length').last().fill(String(length));
-  await this.page!.getByTestId('width').last().fill(String(width));
-  await this.page!.getByTestId('height').last().fill(String(height));
-});
-
 Given('a product with any size', async function (this: CustomWorld) {
   const random = () => String(Math.floor(Math.random() * 900) + 100);
   await this.page!.getByTestId('length').last().fill(random());
@@ -86,19 +75,6 @@ Then('last line is ready for the next product', async function (this: CustomWorl
   expect(lengthValue).toBe('');
   expect(widthValue).toBe('');
   expect(heightValue).toBe('');
-});
-
-Given('{int} products with length {int} width {int} height {int}', async function (
-  this: CustomWorld,
-  quantity: number,
-  length: number,
-  width: number,
-  height: number
-) {
-  await this.page!.getByTestId('quantity').last().fill(String(quantity));
-  await this.page!.getByTestId('length').last().fill(String(length));
-  await this.page!.getByTestId('width').last().fill(String(width));
-  await this.page!.getByTestId('height').last().fill(String(height));
 });
 
 When('I type {string} in the {word} field', async function (this: CustomWorld, text: string, field: string) {

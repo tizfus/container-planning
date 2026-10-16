@@ -3,14 +3,14 @@ Feature: Container Selection
     When I add products the page should show me the total volume in cubic metric and the remaining volume.
 
     Scenario: Default container is selected
-        Given the main page
-        Then the 20ft container is selected
+        Given no products
+        Then the 20ft container is the selected container
         And container volume is 33
         And the total volume is 0
 
 
     Scenario: I reach the maximum volume of the container
-        Given a product with length 320 width 320 height 320
+        Given a product with length 590 width 235 height 239
         When the 20ft container is selected
         Then the container volume element is white
 
